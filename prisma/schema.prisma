@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+  
+  coupleAsPartnerOne Couple? @relation("PartnerOne")
+  coupleAsPartnerTwo Couple? @relation("PartnerTwo")
+  
+  answers      Answer[]
+  memories     Memory[]
+  sentNotes    LoveNote[]  @relation("SentNotes")
+  receivedNotes LoveNote[] @relation("ReceivedNotes")
+  xpHistory    XPHistory[]
+  achievements UserAchievement[]
+}
+
+model Couple {
+  id              String   @id @default(cuid())
+  partnerOneId    String   @unique
+  partnerTwoId    String   @unique
+  anniversaryDate DateTime?
+  level           Int      @default(1)
+  totalXP         Int      @default(0)
+  streak          Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  partnerOne User @relation("PartnerOne", fields: [partnerOneId], references: [id])
+  partnerTwo User @relation("PartnerTwo", fields: [partnerTwoId], references: [id])
+  
+  memories Memory[]
+}
+
+model Question {
+  id       String @id @default(cuid())
+  category String
+  question String
+  type     String
+  
+  answers Answer[]
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  questionId String
+  userId     String
+  answer     String
+  createdAt  DateTime @default(now())
+  
+  question Question @relation(fields: [questionId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Memory {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  photo       String?
+  location    String?
+  date        DateTime
+  coupleId    String?
+  userId      String
+  createdAt   DateTime @default(now())
+  
+  couple Couple? @relation(fields: [coupleId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model LoveNote {
+  id              String    @id @default(cuid())
+  senderId        String
+  receiverId      String
+  message         String
+  unlockDate      DateTime?
+  unlockCondition String?
+  isUnlocked      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  
+  sender   User @relation("SentNotes", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedNotes", fields: [receiverId], references: [id])
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  icon        String
+  requirement Int
+  
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String    @id @default(cuid())
+  userId        String
+  achievementId String
+  progress      Int       @default(0)
+  unlockedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+  
+  @@unique([userId, achievementId])
+}
+
+model XPHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  activity  String
+  xpEarned  Int
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id])
+}
