@@ -22,7 +22,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
-    const socketInstance = io('http://localhost:3000', {
+    const socketUrl = process.env.NODE_ENV === 'production' 
+      ? window.location.origin 
+      : 'http://localhost:3000'
+    
+    const socketInstance = io(socketUrl, {
       transports: ['websocket', 'polling']
     })
 
