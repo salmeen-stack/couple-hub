@@ -19,7 +19,7 @@ export function WebRTCProvider({ children }: { children: ReactNode }) {
   const [peer, setPeer] = useState<SimplePeer.Instance | null>(null)
   const [isCallActive, setIsCallActive] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null)
+  const [localStream, setLocalStream] = useState<MediaStream | undefined>(undefined)
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
   
   const { socket } = useSocket()
@@ -101,7 +101,7 @@ export function WebRTCProvider({ children }: { children: ReactNode }) {
     
     if (localStream) {
       localStream.getTracks().forEach(track => track.stop())
-      setLocalStream(null)
+      setLocalStream(undefined)
     }
     
     setRemoteStream(null)

@@ -34,9 +34,20 @@ export async function POST(request: NextRequest) {
 
     // Get couple data
     const couple = user.coupleAsPartnerOne || user.coupleAsPartnerTwo
-    const partner = user.coupleAsPartnerOne 
-      ? couple?.partnerTwo 
-      : couple?.partnerOne
+    let partner = null
+    if (couple) {
+      const partnerId = couple.partnerOneId === user.id ? couple.partnerTwoId : couple.partnerOneId
+      partner = await prisma.user.findUnique({
+        where: { id: partnerId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          avatar: true,
+          createdAt: true,
+        },
+      })
+    }
 
     return NextResponse.json({
       user: {
@@ -53,8 +64,6 @@ export async function POST(request: NextRequest) {
         anniversaryDate: couple.anniversaryDate,
         partnerOneId: couple.partnerOneId,
         partnerTwoId: couple.partnerTwoId,
-        partnerOne: couple.partnerOne,
-        partnerTwo: couple.partnerTwo,
       } : null,
       partner,
     })
