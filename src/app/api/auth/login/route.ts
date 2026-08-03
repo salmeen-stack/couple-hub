@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Get couple data
     const couple = user.coupleAsPartnerOne || user.coupleAsPartnerTwo
-    const partner = couple?.partnerOneId === user.id 
+    const partner = user.coupleAsPartnerOne 
       ? couple?.partnerTwo 
       : couple?.partnerOne
 
