@@ -14,6 +14,14 @@ app.prepare().then(() => {
   const server = createServer(async (req, res) => {
     try {
       const parsedUrl = parse(req.url!, true)
+      
+      // Health check endpoint for Railway
+      if (req.url === '/health') {
+        res.statusCode = 200
+        res.end('OK')
+        return
+      }
+      
       await handle(req, res, parsedUrl)
     } catch (err) {
       console.error('Error occurred handling', req.url, err)
