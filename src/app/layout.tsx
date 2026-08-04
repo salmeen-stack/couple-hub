@@ -4,6 +4,8 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SocketProvider } from "@/contexts/SocketContext";
 import { WebRTCProvider } from "@/contexts/WebRTCContext";
+import BackgroundMusic from "@/components/BackgroundMusic";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +36,10 @@ export default function RootLayout({
         <SocketProvider>
           <AuthProvider>
             <WebRTCProvider>
-              {children}
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+              <BackgroundMusic />
             </WebRTCProvider>
           </AuthProvider>
         </SocketProvider>
